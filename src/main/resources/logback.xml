@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Logback configuration. See http://logback.qos.ch/manual/index.html -->
+<configuration scan="true" scanPeriod="10 seconds" debug="false">
+    <!-- 日志级别 -->
+    <springProperty scope="context" name="LOG_ROOT_LEVEL" source="logging.level.root" defaultValue="ERROR"/>
+    <!--  标识这个"STDOUT" 将会添加到这个logger -->
+    <springProperty scope="context" name="STDOUT" source="log.stdout" defaultValue="STDOUT"/>
+    <!-- 日志格式：%d日期；%thread线程名；%-5level日志级别从左显示5个字符长度，列如:DEBUG；
+        %logger{50}java类名，例如:com.muses.taoshop.MyTest，50表示字符长度；%msg日志内容；%n换行 -->
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n" />
+    <!-- 日志级别ROOT-->
+    <property name="${LOG_ROOT_LEVEL}" value="DEBUG" />
+    <!-- 日志跟目录 -->
+    <property name="LOG_HOME" value="/Users/zhou/Desktop" />
+    <!-- 日志文件路径-->
+    <property name="LOG_DIR" value="${LOG_HOME}/%d{yyyyMMdd}" />
+    <!-- 日志文件名称即前缀名 -->
+    <property name="LOG_PREFIX" value="micro-apigateway-zuul" />
+    <!-- 日志文件编码 -->
+    <property name="LOG_CHARSET" value="utf-8" />
+    <!-- 配置日志的滚动时间，保存时间为30天-->
+    <property name="MAX_HISTORY" value="30" />
+    <!-- 文件最大大小，默认为10MB-->
+    <property name="MAX_FILE_SIZE" value="10MB" />
+    
+
+    <!-- 一般信息按照每天生成日志文件 -->
+    <appender name="INFO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_HOME}/${LOG_PREFIX}-info.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 每天一归档：新的日志文件路径名称，%d:日期 %i:i是变量 -->
+            <fileNamePattern>${LOG_HOME}/${LOG_PREFIX}-info-%d{yyyyMMdd}.%i.log</fileNamePattern>
+			<!-- 单个日志文件最多10MB, 30天的日志周期，最大不能超过2GB -->
+            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <totalSizeCap>2GB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <encoder>
+            <Pattern>${LOG_PATTERN}</Pattern>
+        </encoder>
+    </appender>
+
+    <!--错误信息按照每天生成日志文件-->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <File>${LOG_HOME}/${LOG_PREFIX}-error.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 每天一归档 -->
+            <fileNamePattern>${LOG_HOME}/${LOG_PREFIX}-error-%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <!-- 单个日志文件最多500MB, 30天的日志周期，最大不能超过2GB -->
+            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <totalSizeCap>2GB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <encoder>
+            <Pattern>${LOG_PATTERN}</Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+	<logger name="org.mybatis" level="DEBUG" />
+
+    <!-- 日志输出级别 -->
+    <root level="${LOG_ROOT_LEVEL}">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="INFO_FILE" />
+        <appender-ref ref="ERROR_FILE" />
+    </root>
+
+</configuration>
