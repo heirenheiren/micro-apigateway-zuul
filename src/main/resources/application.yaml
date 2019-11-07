@@ -17,7 +17,7 @@ eureka:
     lease-renewal-interval-in-seconds: 30     # 心跳时间，即服务续约间隔时间（缺省为30s）
     lease-expiration-duration-in-seconds: 90   # 发呆时间，即服务续约到期时间（缺省为90s）
 zuul: 
-  prefix: /v1#整个zuul前缀
+  #prefix: /v1#整个zuul前缀
   ignored-services: '*' #忽略所有未配置的service
   #ignored-patterns: /*-service/**  #忽略满足条件的服务(即：忽略所有-service结尾的服务)
   retryable: true
