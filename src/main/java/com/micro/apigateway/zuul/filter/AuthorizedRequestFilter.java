@@ -4,23 +4,22 @@ import java.nio.charset.Charset;
 import java.util.Base64;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
 
+import lombok.extern.java.Log;
+
 /**
  * 用户登录校验Filter
  */
-@Component
+@Log
 public class AuthorizedRequestFilter extends ZuulFilter{
-	//    private String pre_filterType = PRE_TYPE;    // 前置过滤器(url之前执行)
-//  private String post_filterType = POST_TYPE;  // 后置过滤器
-//  private String error_filterType = ERROR_TYPE;// 异常过滤器
   /**
    * 过滤器类型
    * @return
@@ -41,7 +40,6 @@ public class AuthorizedRequestFilter extends ZuulFilter{
    */
   @Override
   public int filterOrder() {
-
       return 0;
   }
   /**
@@ -54,9 +52,10 @@ public class AuthorizedRequestFilter extends ZuulFilter{
       RequestContext requestContext = RequestContext.getCurrentContext();
       HttpServletRequest  request = requestContext.getRequest();
 
-      // System.out.println(request.getRequestURI());
-      // System.out.println(request.getRequestURL());
-//拦截指定url, 进行参数校验
+      log.info(request.getMethod());
+      log.info(request.getRequestURI());
+      log.info(request.getRequestURL().toString());
+//拦截指定url, 进行参数校验,对不符合格式的URL或者参数进行拦截
 //      if ("/v1/micro-service/study/getStudy".equalsIgnoreCase(request.getRequestURI())){
 //          return true;
 //      }
@@ -74,24 +73,25 @@ public class AuthorizedRequestFilter extends ZuulFilter{
       HttpServletRequest  request = requestContext.getRequest();
 
       //token对象
-      String id = request.getHeader("id");
+      String token = request.getHeader("token");
 
-      if(StringUtils.isBlank((id))){
-          id  = request.getParameter("id");
+      if(StringUtils.isBlank((token))){
+    	  token  = request.getParameter("token");
       }
 
       //如果id参数为null就程序停止,  同时返回  HttpStatus.UNAUTHORIZED  状态码
-      if (StringUtils.isBlank(id)) {
+      if (StringUtils.isBlank(token)) {
           requestContext.setSendZuulResponse(false);
           requestContext.setResponseStatusCode(HttpStatus.UNAUTHORIZED.value());
+          requestContext.setResponseBody("网关认证失败，停止路由");
+          requestContext.set("code", 0);
+          HttpServletResponse response = requestContext.getResponse();
+          response.setHeader("content-type", "text/html;charset=utf-8");
+      }else {
+    	  requestContext.setSendZuulResponse(true);
+          requestContext.setResponseStatusCode(200);
+          requestContext.set("code", 1);
       }
-      
-      String auth = "studyjava:hello"; // 认证的原始信息
-      byte[] encodedAuth = Base64.getEncoder()
-              .encode(auth.getBytes(Charset.forName("US-ASCII"))); // 进行一个加密的处理
-      // 在进行授权的头信息内容配置的时候加密的信息一定要与“Basic”之间有一个空格
-      String authHeader = "Basic " + new String(encodedAuth);
-      requestContext.addZuulRequestHeader("Authorization", authHeader);
       return null;
   }
 }

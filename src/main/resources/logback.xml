@@ -8,7 +8,7 @@
     <springProperty scope="context" name="STDOUT" source="log.stdout" defaultValue="STDOUT"/>
     <!-- 日志格式：%d日期；%thread线程名；%-5level日志级别从左显示5个字符长度，列如:DEBUG；
         %logger{50}java类名，例如:com.muses.taoshop.MyTest，50表示字符长度；%msg日志内容；%n换行 -->
-    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n" />
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} [%file:%line] - %msg%n" />
     <!-- 日志级别ROOT-->
     <property name="${LOG_ROOT_LEVEL}" value="DEBUG" />
     <!-- 日志跟目录 -->
