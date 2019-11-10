@@ -68,8 +68,6 @@
         </encoder>
     </appender>
 
-	<logger name="org.mybatis" level="DEBUG" />
-
     <!-- 日志输出级别 -->
     <root level="${LOG_ROOT_LEVEL}">
         <appender-ref ref="STDOUT" />

@@ -2,13 +2,13 @@ spring:
   application:
     name: micro-apigateway-zuul
 server:
-  port: 8083
+  port: 8084
 eureka:
   client:
     registry-fetch-interval-seconds: 5 # 表示eureka client间隔多久去拉取服务注册信息，默认为30秒，对于api-gateway，如果要迅速获取服务注册状态，可以缩小该值，比如5秒
     serviceUrl:
       #defaultZone: http://eureka.didispace.com/eureka/
-      defaultZone: http://127.0.0.1:8080/eureka/#,http://127.0.0.1:8081/eureka/,http://127.0.0.1:8082/eureka/
+      defaultZone: http://127.0.0.1:8081/eureka/#,http://127.0.0.1:8082/eureka/,http://127.0.0.1:8083/eureka/
     healthcheck: 
       enable: true
   instance:
@@ -27,13 +27,13 @@ zuul:
   routes:
     micro-consumer: #自定义名称
       path: /micro-consumer-proxy/*
-      #url: http://localhost:8081/
+      #url: http://localhost:8085/
       serviceId: micro-consumer #/micro-consumer-proxy/开头的路径转发至micro-consumer微服务
   #解决http请求头为空的问题 (值为空就好了)
   sensitive-headers:
 #micro-consumer-proxy: 
 #  ribbon:
-#    listOfServers: http://127.0.0.1:8084
+#    listOfServers: http://127.0.0.1:8085
 hystrix: #hystrix配置
   command:
     default:
