@@ -1,0 +1,5 @@
+spring:
+  cloud:
+    config:
+      name: micro-apigateway-zuul #指向micro-config对该服务的配置文件名称，多个通过逗号分隔
+      uri: http://127.0.0.1:8080 #Config Server服务地址
