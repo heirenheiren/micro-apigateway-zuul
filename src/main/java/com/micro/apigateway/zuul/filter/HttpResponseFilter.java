@@ -1,5 +1,6 @@
 package com.micro.apigateway.zuul.filter;
 
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.exception.ZuulException;
 /**
@@ -18,6 +19,11 @@ public class HttpResponseFilter extends ZuulFilter {
 	@Override
 	public Object run() throws ZuulException {
 		// TODO Auto-generated method stub
+		HystrixRequestContext context = HystrixRequestContext.getContextForCurrentThread();
+        if (HystrixRequestContext.isCurrentThreadInitialized()) {
+        	//不清除会有内存溢出风险
+            context.shutdown();
+        }
 		return null;
 	}
 

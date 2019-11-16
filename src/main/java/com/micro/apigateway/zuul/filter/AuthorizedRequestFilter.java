@@ -1,14 +1,13 @@
 package com.micro.apigateway.zuul.filter;
 
-import java.nio.charset.Charset;
-import java.util.Base64;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 
+import com.micro.apigateway.zuul.helper.RequestContextHelper;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
@@ -68,6 +67,9 @@ public class AuthorizedRequestFilter extends ZuulFilter{
    */
   @Override
   public Object run() throws ZuulException {
+	  HystrixRequestContext.initializeContext();
+      RequestContextHelper.set(RequestContext.getCurrentContext());
+      
       System.out.println("拦截逻辑");
       RequestContext requestContext =  RequestContext.getCurrentContext();
       HttpServletRequest  request = requestContext.getRequest();

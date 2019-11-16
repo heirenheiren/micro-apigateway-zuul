@@ -1,6 +1,9 @@
 package com.micro.apigateway.zuul.filter;
 
+import com.micro.apigateway.zuul.helper.RequestContextHelper;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import com.netflix.zuul.ZuulFilter;
+import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
 
 public class HttpRequestFilter extends ZuulFilter {
@@ -14,6 +17,7 @@ public class HttpRequestFilter extends ZuulFilter {
 	@Override
 	public Object run() throws ZuulException {
 		// TODO Auto-generated method stub
+		RequestContext context = RequestContextHelper.get();
 		return null;
 	}
 
