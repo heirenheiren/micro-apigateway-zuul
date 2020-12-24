@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: micro-apigateway-zuul
+server:
+  port: 8084
+eureka:
+  client:
+    registry-fetch-interval-seconds: 5 # 表示eureka client间隔多久去拉取服务注册信息，默认为30秒，对于api-gateway，如果要迅速获取服务注册状态，可以缩小该值，比如5秒
+    serviceUrl:
+      #defaultZone: http://eureka.didispace.com/eureka/
+      defaultZone: http://127.0.0.1:8081/eureka/#,http://127.0.0.1:8082/eureka/,http://127.0.0.1:8083/eureka/
+    healthcheck: 
+      enable: true
+  instance:
+    instance-id: zuul网关服务  # 人性化显示出服务的信息
+    prefer-ip-address: true    # 访问路径可显示ip地址
+    lease-renewal-interval-in-seconds: 30     # 心跳时间，即服务续约间隔时间（缺省为30s）
+    lease-expiration-duration-in-seconds: 90   # 发呆时间，即服务续约到期时间（缺省为90s）
+zuul: 
+  #prefix: /v1#整个zuul前缀
+  #ignored-services: '*' #忽略所有未配置的service
+  #ignored-patterns: /*-service/**  #忽略满足条件的服务(即：忽略所有-service结尾的服务)
+  #retryable: true
+  #host:
+    #connect-timeout-millis: 20000
+    #socket-timeout-millis: 20000
+  routes:
+    micro-consumer: #自定义名称
+      path: /micro-consumer-proxy/*
+      #url: http://localhost:8085/
+      serviceId: micro-consumer #/micro-consumer-proxy/开头的路径转发至micro-consumer微服务
+  #解决http请求头为空的问题 (值为空就好了)
+  sensitive-headers:
+#micro-consumer-proxy: 
+#  ribbon:
+#    listOfServers: http://127.0.0.1:8085
+hystrix: #hystrix配置
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 2500 
+ribbon: #ribbon负载均衡参数配置
+  ReadTimeout: 5000
+  ConnectTimeout: 5000
